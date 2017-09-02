@@ -1,0 +1,56 @@
+- name: == Blade == Generate kickstart file[s] for QA node[s]  
+  template: 
+    src: ../templates/kickstarts/c{{ centos_dist }}-blade.cfg.j2
+    dest: /var/www/qa/ks/{{ inventory_hostname }}-ks.cfg 
+    mode: 0755
+  delegate_to: "{{ ks_node }}" 
+  
+- name: == Blade == Generating the tftp configuration boot file
+  template: 
+    src: ../templates/pxeboot.j2
+    dest: /var/lib/tftpboot/pxelinux.cfg/01-{{ mac_address | lower | replace(":","-") }} 
+    mode: 0755
+  delegate_to: "{{ tftpd_node }}"
+
+
+- name: == Blade == Deploy expect scripts to talk to IBM MM
+  template:
+    src: ../templates/blade-expect-{{ item }}.j2
+    dest: /var/tmp/ibm-{{ inventory_hostname }}-{{ item }}
+  with_items:
+    - "on"
+    - "off"
+  delegate_to: "{{ tftpd_node }}"  
+
+- name: == Blade == Powering off blade
+  shell: expect /var/tmp/ibm-{{ inventory_hostname }}-"{{ item }}"
+  delegate_to: "{{ tftpd_node }}" 
+  with_items:
+    - "off"
+
+- name: == Blade == Waiting for blade to be powered off
+  pause: 
+    seconds: 15
+
+
+- name: == Blade == Powering on blade
+  shell: expect /var/tmp/ibm-{{ inventory_hostname }}-"{{ item }}"
+  delegate_to: "{{ tftpd_node }}" 
+  with_items:
+    - "on"
+  
+
+- name: == Blade == Waiting for anaconda to have started install
+  pause: 
+    minutes: 4
+
+- name: == Blade == Ensuring node will reboot on local disk
+  template: 
+    src: ../templates/pxeboot-local.j2
+    dest: /var/lib/tftpboot/pxelinux.cfg/01-{{ mac_address | lower | replace(":","-") }} 
+    mode: 0755
+  delegate_to: "{{ tftpd_node }}"
+
+- name: == Blade == Waiting for host to be reachable
+  wait_for: host={{ ip }} port=22 timeout=1200 
+  delegate_to: "{{ tftpd_node }}"

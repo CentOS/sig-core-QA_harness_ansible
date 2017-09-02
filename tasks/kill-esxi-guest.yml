@@ -1,0 +1,7 @@
+
+- name: == ESXi == Destroying previous VM
+  raw: vim-cmd vmsvc/power.off $(vim-cmd vmsvc/getallvms|grep {{ inventory_hostname }}| awk '{print $1}') ; vim-cmd vmsvc/unregister $(vim-cmd vmsvc/getallvms|grep {{ inventory_hostname }}| awk '{print $1}') ; rm -Rf /vmfs/volumes/{{ esxi_vmfs_vol }}/{{ inventory_hostname}}
+  delegate_to: "{{ esxi_host }}"
+
+
+  

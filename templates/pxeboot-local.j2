@@ -1,0 +1,15 @@
+DEFAULT menu
+PROMPT 0
+MENU TITLE {{ inventory_hostname }}
+TIMEOUT 10
+TOTALTIMEOUT 6000
+ONTIMEOUT local
+
+LABEL local
+        MENU LABEL (local)
+        MENU DEFAULT
+	kernel chain.c32
+        append hd0 
+
+MENU end
+

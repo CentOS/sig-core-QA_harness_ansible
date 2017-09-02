@@ -1,0 +1,21 @@
+- name: Installing required pkg
+  yum: name=unbound state=installed
+
+- name: Configuring basic unbound
+  template: src=templates/unbound.conf.j2 dest=/etc/unbound/unbound.conf
+  notify: restart_unbound
+
+- name: Configuring local cache overrides
+  template: src=templates/01_dns_cache_override.conf.j2 dest=/etc/unbound/conf.d/01_dns_cache_override.conf
+  notify: restart_unbound
+
+- name: Configuring forwarder if needed
+  template: src=templates/99_forward.conf.j2 dest=/etc/unbound/conf.d/99_forward.conf
+  when: unbound_use_forwarder
+  notify: restart_unbound
+
+- name: Ensuring unbound is started/enabled
+  service: name=unbound state=started enabled=true
+
+
+

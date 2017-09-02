@@ -1,0 +1,23 @@
+#!/bin/bash
+{% if xen_guest_bridge == True %}
+ {% set xen_guest_network = 'bridge=' + xen_host_bridge %}
+{% else %}
+ {% set xen_guest_network = 'network=' + xen_guest_default_net %}
+{% endif %}
+
+virt-install \
+  --name  {{ inventory_hostname }} \
+  --vcpus {{ xen_guest_vcpus }} \
+  --memory memory={{ xen_guest_memory }},maxmemory={{ (xen_guest_memory * 2) | int }} \
+  --disk path=/var/lib/libvirt/images/{{ inventory_hostname}}.qcow2,size={{ xen_guest_disk_size }},format=qcow2,device=disk,bus=xen,cache=none \
+  --nographics \
+  --network {{ xen_guest_network }} \
+  --paravirt \
+  --wait=-1 \
+  --noautoconsole \
+  --initrd-inject=/var/lib/libvirt/local-kickstarts/{{ inventory_hostname }}.cfg \
+  --extra-args "console=hvc0 ks=file:/{{ inventory_hostname }}.cfg" \
+  --location  http://mirror.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/ 
+
+
+

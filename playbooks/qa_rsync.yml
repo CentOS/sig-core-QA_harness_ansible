@@ -1,0 +1,30 @@
+---
+- hosts: iscsi.lon2.centos.org
+  become: True
+  gather_facts: false
+
+  tasks:
+    - name: Verifying we have correct local directory structure for CentOS {{ release }} {{ arch }}
+      file:
+        path: /srv/mirrors/mirror.centos.org/centos/{{ release }}/{{ item }}/{{ arch }}
+        state: directory
+      with_items:
+        - os
+        - updates
+        - extras
+    
+    - name: Rsyncing latest QA tree for CentOS {{ release }} {{ arch }} 
+      shell: "rsync -avH qa.centos.org::c5beta-qa/centos/{{ release }}/{{ item }}/{{ arch }}/ /srv/mirrors/mirror.centos.org/centos/{{ release }}/{{ item }}/{{ arch }}/ --delete-before"
+      with_items:
+        - os
+        - updates
+        - extras
+
+    - name: Ensuring latest vmlinuz/initrd.img are up2date for release {{ release }} {{ arch }}
+      get_url:
+        url: http://qa.centos.org/centos/{{ release }}/os/{{ arch }}/images/pxeboot/{{ item }}
+        dest: /var/lib/tftpboot/CentOS/{{ release }}/{{ arch }}/{{ item }}
+      with_items:
+        - vmlinuz
+        - initrd.img
+      delegate_to: "{{ tftpd_node }}"

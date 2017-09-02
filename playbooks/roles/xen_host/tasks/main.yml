@@ -1,0 +1,19 @@
+- name: Ensuring we have the xen repo installed
+  yum:
+    pkg: centos-release-xen-46
+    state: installed
+
+- name: Installing dom0 kernel
+  yum:
+    pkg: kernel
+    state: latest
+
+- name: Now installing Xen/Libvirt
+  yum:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+    - xen
+    - libvirt
+    - virt-install
+    - libvirt-daemon-xen

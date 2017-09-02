@@ -1,0 +1,23 @@
+---
+- hosts: all
+  gather_facts: False
+  become: True
+
+  tasks:
+    - include: ../tasks/deploy-kvm-guest.yml
+      when: "'kvm-guests' in group_names" 
+      
+    - include: ../tasks/deploy-vbox-guest.yml
+      when: "'vbox-guests' in group_names"   
+    
+    - include: ../tasks/deploy-esxi-guest.yml
+      when: "'esxi-guests' in group_names"
+      
+    - include: ../tasks/deploy-blade-guest.yml
+      when: "'blade-guests' in group_names"    
+      
+    - include: ../tasks/deploy-xen-guest.yml
+      when: "'xen-guests' in group_names"    
+      
+    - include: ../tasks/deploy-vbox-guest-iso.yml
+      when: "'iso-guests' in group_names" 

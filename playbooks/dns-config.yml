@@ -1,0 +1,23 @@
+---
+- hosts: c0ba.lon2.centos.org
+  become: true
+  vars:
+    - unbound_cache_override:
+        - host: mirror.centos.org
+          ip: "192.168.204.20"
+        - host: mirrorlist.centos.org
+          ip: "192.168.204.20"
+        - host: mm.lon2.centos.org
+          ip: "192.168.204.10"
+        - host: mirror.lon2.centos.org
+          ip: "192.168.204.20"
+  roles:
+    - { role: unbound }
+
+  tasks:
+    - name: Adding all nodes in dns
+      template:
+        src: ../templates/02_local_dns_cache_override.conf.j2
+        dest: /etc/unbound/conf.d/02_local_dns_cache_override.conf
+      notify: restart_unbound
+

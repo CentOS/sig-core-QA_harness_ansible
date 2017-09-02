@@ -1,0 +1,6 @@
+!/bin/bash
+key_seq=$(echo "linux inst.ks={{ ks_url }}/{{ inventory_hostname }}-ks.cfg"|/usr/local/bin/scancodes)
+
+for key in ${key_seq} 
+  do vboxmanage controlvm {{ inventory_hostname }} keyboardputscancode $key
+done

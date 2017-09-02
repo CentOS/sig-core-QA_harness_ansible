@@ -1,0 +1,27 @@
+- name: Ensure we have local pkgs
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - gcc
+    - make
+    - kernel-devel
+
+- name: Downloading VirtualBox
+  get_url:
+    url: "{{ item }}"
+    dest: /root/
+  with_items:
+    - http://download.virtualbox.org/virtualbox/5.1.14/VirtualBox-5.1-5.1.14_112924_el7-1.x86_64.rpm
+    - http://download.virtualbox.org/virtualbox/5.1.14/Oracle_VM_VirtualBox_Extension_Pack-5.1.14-112924.vbox-extpack
+
+- name: Installing VirtualBox
+  yum:
+    name: /root/VirtualBox-5.1-5.1.14_112924_el7-1.x86_64.rpm
+    state: installed
+
+- name: Compiling vbox kernel modules
+  shell: /sbin/rcvboxdrv setup
+
+- name: Adding vbox extpack (needed for pxe boot)
+  shell: vboxmanage extpack install /root/Oracle_VM_VirtualBox_Extension_Pack-5.1.14-112924.vbox-extpack --replace

@@ -1,0 +1,23 @@
+#!/bin/bash
+{% if kvm_guest_bridge == True %}
+ {% set kvm_guest_network = 'bridge=' + kvm_host_bridge %}
+{% else %}
+ {% set kvm_guest_network = 'network=' + kvm_guest_default_net %}
+{% endif %}
+
+virt-install \
+  --name  {{ inventory_hostname }} \
+  --vcpus {{ kvm_guest_vcpus }} \
+  --memory memory={{ kvm_guest_memory }},maxmemory={{ (kvm_guest_memory * 2) | int }} \
+  --disk path=/var/lib/libvirt/images/{{ inventory_hostname}}.qcow2,size={{ kvm_guest_disk_size }},format=qcow2,device=disk,bus=virtio,cache=none \
+  --nographics \
+  --network {{ kvm_guest_network }} \
+  --hvm --accelerate \
+  --autostart --wait=-1 \
+  --noautoconsole \
+  --initrd-inject=/var/lib/libvirt/local-kickstarts/{{ inventory_hostname }}.cfg \
+  --extra-args "console=ttyS0 ks=file:/{{ inventory_hostname }}.cfg" \
+  --location  {{ http_mirror_baseurl }}/{{ centos_dist }}/os/{{ centos_arch }}/ 
+
+
+

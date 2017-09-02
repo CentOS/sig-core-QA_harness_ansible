@@ -1,0 +1,28 @@
+- name: == KVM == Destroying Virtual Guest 
+  virt: name={{ inventory_hostname }} state=destroyed
+  ignore_errors: yes
+  delegate_to: "{{ kvm_host }}"
+
+- name: == KVM == Undefining Virtual Guest 
+  virt: name={{ inventory_hostname }} command=undefine
+  ignore_errors: yes
+  delegate_to: "{{ kvm_host }}"
+
+- name: == KVM == Creating kickstart to provision VM[s]
+  template: src=../templates/kickstarts/c{{ centos_dist }}-kvm-guest.cfg.j2 dest=/var/lib/libvirt/local-kickstarts/{{ inventory_hostname }}.cfg
+  delegate_to: "{{ kvm_host }}"
+
+- name: == KVM == Creating temporary virt-install command
+  template: src=../templates/ansible-virt-install.j2 dest=/var/lib/libvirt/virt-install-{{ inventory_hostname }} mode=0750 owner=root group=root
+  delegate_to: "{{ kvm_host }}"
+
+- name: == KVM == Provisining the Virtual Guest[s]
+  command: /var/lib/libvirt/virt-install-{{ inventory_hostname }}
+  delegate_to: "{{ kvm_host }}"
+
+- name: == KVM == Waiting for sshd to be available on the deployed node
+  wait_for: port=22 host={{ ip }} timeout=1200 
+  delegate_to: "{{ kvm_host }}"
+
+   
+    

@@ -1,0 +1,22 @@
+# The server clause sets the main parameters.
+server:
+        # verbosity number, 0 is least verbose. 1 is default.
+        verbosity: 1
+        # The listen interfaces are not changed on reload, only on restart.
+         interface: 0.0.0.0
+         interface: ::0
+         access-control: {{ unbound_acl_allow }} allow
+         access-control: ::1 allow
+        username: "unbound"
+
+        # the working directory. The relative files in this config are
+        # relative to this directory. If you give "" the working directory
+        # is not changed.
+        directory: "/etc/unbound"
+        pidfile: "/var/run/unbound/unbound.pid"
+        include: /etc/unbound/local.d/*.conf
+
+
+include: /etc/unbound/conf.d/*.conf
+
+

@@ -1,0 +1,14 @@
+- name: == Blade == Deploy expect scripts to talk to IBM MM
+  template:
+    src: ../templates/blade-expect-{{ item }}.j2
+    dest: /var/tmp/ibm-{{ inventory_hostname }}-{{ item }}
+  with_items:
+    - "off"
+  delegate_to: "{{ tftpd_node }}"  
+
+- name: == Blade == Powering off blade
+  shell: expect /var/tmp/ibm-{{ inventory_hostname }}-"{{ item }}"
+  delegate_to: "{{ tftpd_node }}" 
+  with_items:
+    - "off"
+

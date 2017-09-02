@@ -1,0 +1,18 @@
+# only applies for vbox guest
+
+- name: == VirtualBox == Ensuring previous deployed VM not running
+  shell: vboxmanage list runningvms |grep -q "{{ inventory_hostname }}" && echo running || echo notrunning
+  register: vbox_guest_running
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Shutting down previous VM
+  shell: vboxmanage controlvm "{{ inventory_hostname }}" poweroff
+  delegate_to: "{{ vbox_host }}"
+  when: vbox_guest_running.stdout == "running"
+
+- name: == VirtualBox == Deleting previous VM
+  shell: vboxmanage unregistervm "{{ inventory_hostname }}" --delete
+  delegate_to: "{{ vbox_host }}"
+  when: vbox_guest_running.stdout == "running"
+
+

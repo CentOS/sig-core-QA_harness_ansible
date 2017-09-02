@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: True
+  gather_facts: false
+
+  tasks:
+    - name: Generate kickstart file[s] for QA node[s]  
+      template: 
+        src: ../templates/c{{ centos_dist }}-lon2.ks.cfg.j2 
+        dest: /var/www/qa/ks/{{ inventory_hostname }}-ks.cfg 
+        mode: 0755
+      delegate_to: "{{ ks_node }}" 
+      tags:
+        - ks
+
+    - name: Generating the tftp configuration boot file
+      template: 
+        src: ../templates/pxeboot.j2
+        dest: /var/lib/tftpboot/pxelinux.cfg/01-{{ mac_address | lower | replace(":","-") }} 
+        mode: 0755
+      delegate_to: "{{ tftpd_node }}"
+      tags:
+        - pxe

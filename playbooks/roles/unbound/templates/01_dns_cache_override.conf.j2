@@ -1,0 +1,7 @@
+# This file is managed by Ansible
+# Don't edit by hand !
+#
+{% for item in unbound_cache_override %}
+local-data: "{{ item.host }}.	IN	A	{{ item.ip }}"
+local-data: "{{ item.ip|ipaddr('revdns') }}	IN	PTR	{{ item.host}}." 
+{% endfor %}

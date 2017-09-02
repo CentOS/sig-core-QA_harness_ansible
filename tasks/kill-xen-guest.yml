@@ -1,0 +1,8 @@
+- name: == Xen == Destroying Virtual Guest 
+  shell: /usr/local/bin/destroyvm {{ inventory_hostname }}
+  ignore_errors: yes
+  delegate_to: "{{ xen_host }}"
+
+
+   
+    

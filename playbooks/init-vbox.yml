@@ -1,0 +1,6 @@
+---
+- hosts: vbox-hosts
+  become: true
+  
+  roles:
+    - { role: vbox_host }

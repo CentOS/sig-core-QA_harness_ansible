@@ -1,0 +1,105 @@
+#version=DEVEL
+text
+# System authorization information
+auth --enableshadow --passalgo=sha512
+# Use network installation
+url --url="http://mirror.centos.org/centos/7/os/x86_64/"
+# Run the Setup Agent on first boot
+firstboot --disable
+ignoredisk --only-use=sda
+# Keyboard layouts
+# old format: keyboard be-latin1
+# new format:
+keyboard --vckeymap=be-latin1 --xlayouts='be'
+# System language
+lang en_GB.UTF-8
+
+# Network information
+
+{% if inventory_hostname in groups['kvm-hosts'] %}
+#
+network --device=br0 --bridgeslaves=eth0 --bootproto=static --ip={{ ip }} --gateway={{ gateway }} --nameserver={{ nameserver}} --netmask={{ netmask }} --activate
+network --bootproto=dhcp --device=eth0 --onboot=off
+{% else %}
+
+network  --bootproto=static --device=eth0 --gateway={{ gateway }} --ip={{ ip }} --nameserver={{ nameserver }} --netmask={{ netmask }} --ipv6=auto --activate 
+
+{% endif %}
+
+network  --bootproto=dhcp --device=eth1 --ipv6=auto --onboot=off
+network  --hostname={{ inventory_hostname }}
+
+# Root password
+rootpw --iscrypted $6$srmWxBCjJkmh4GYa$rv1RU0LEeIKrRgQPhdDSRgmwueLifrCbihqvzy43EbsNo22FdXzdP9mHS.psbzBjQ9IxrYiHzx6od2w9dYU0x/
+# System services
+services --enabled="chronyd"
+# System timezone
+timezone Etc/UTC --isUtc
+# System bootloader configuration
+bootloader --location=mbr --boot-drive=sda
+# Partition clearing information
+clearpart --all --initlabel
+zerombr
+
+# Disk partitioning information
+part pv.144 --fstype="lvmpv" --ondisk=sda --size=30000 --grow
+part /boot --fstype="ext4" --ondisk=sda --size=1024
+volgroup vg_{{ inventory_hostname_short }} --pesize=4096 pv.144
+logvol /  --fstype="ext4" --size=10240 --name=root --vgname=vg_{{ inventory_hostname_short }}
+logvol /home  --fstype="ext4" --size=2048 --name=home --vgname=vg_{{ inventory_hostname_short }}
+logvol swap  --fstype="swap" --size=2048 --name=swap --vgname=vg_{{ inventory_hostname_short }}
+{% if inventory_hostname in groups['kvm-hosts'] %}
+# Adding dedicated LV for libvirt
+logvol /var/lib/libvirt/images --fstype="ext4" --size 2048 --grow --name=libvirt_images --vgname=vg_{{ inventory_hostname_short }}
+{% endif %}
+
+
+repo --name="base" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
+repo --name="updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
+
+# Ensuring reboot
+reboot
+
+%post
+{% for user in admins_list %}
+# Adding user,ssh pub key and sudo right for {{ user.login_name }} 
+/sbin/useradd {{ user.login_name}} -c "{{ user.full_name }}"
+mkdir /home/{{ user.login_name }}/.ssh
+ {% for key in user.ssh_pub_key  %}
+ echo "{{ key }}" >> /home/{{ user.login_name }}/.ssh/authorized_keys
+ {% endfor %}
+chmod 700 /home/{{ user.login_name }}/.ssh
+chmod 600 /home/{{ user.login_name }}/.ssh/* ; chcon -v -R -t ssh_home_t /home/{{ user.login_name }}/.ssh*
+chown -R {{ user.login_name }}.{{ user.login_name}} /home/{{ user.login_name }}/
+echo "{{ user.login_name }} ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/{{ user.login_name }}
+{% endfor %}
+
+%end
+
+
+%packages
+@^minimal
+@core
+chrony
+{% if inventory_hostname in groups['kvm-hosts'] %}
+bridge-utils
+qemu-kvm-tools
+qemu-kvm
+virt-install
+libvirt
+libvirt-python
+{% endif %}
+
+
+%end
+
+%addon com_redhat_kdump --disable --reserve-mb='auto'
+
+%end
+
+%anaconda
+pwpolicy root --minlen=6 --minquality=50 --notstrict --nochanges --notempty
+pwpolicy user --minlen=6 --minquality=50 --notstrict --nochanges --notempty
+pwpolicy luks --minlen=6 --minquality=50 --notstrict --nochanges --notempty
+%end
+

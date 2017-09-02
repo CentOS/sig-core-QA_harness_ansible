@@ -1,0 +1,95 @@
+# only applies for vbox guest
+- name: == VirtualBox == Computing sha256sum for "{{ iso_image }}"
+  shell: sha256sum {{ mirror_nfs_local }}/centos/{{ centos_dist }}/isos/{{ centos_arch }}/{{ iso_image }}
+  delegate_to: "{{ vbox_host }}"
+  register: isochecksum
+
+- name: == VirtualBox == Print sha256sum checksum for "{{ iso_image }}"
+  debug:
+    msg: "sha256sum checksum for {{ isochecksum.stdout }}"
+    verbosity: 0
+
+- name: == VirtualBox == Ensuring we have scancodes util to send key strokes 
+  copy:
+    src: ../files/scancodes
+    dest: /usr/local/bin/scancodes
+    mode: 0755
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Generate kickstart file[s] for QA node[s]  
+  template: 
+    src: ../templates/kickstarts/c{{ centos_dist }}-vbox-guest.cfg.j2
+    dest: /var/www/qa/ks/{{ inventory_hostname }}-ks.cfg 
+    mode: 0755
+  delegate_to: "{{ ks_node }}" 
+  
+- name: == VirtualBox == Ensuring previous deployed VM not running
+  shell: vboxmanage list runningvms |grep -q "{{ inventory_hostname }}" && echo running || echo notrunning
+  register: vbox_guest_running
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Shutting down previous VM
+  shell: vboxmanage controlvm "{{ inventory_hostname }}" poweroff
+  delegate_to: "{{ vbox_host }}"
+  when: vbox_guest_running.stdout == "running"
+
+- name: == VirtualBox == Deleting previous VM
+  shell: vboxmanage unregistervm "{{ inventory_hostname }}" --delete
+  delegate_to: "{{ vbox_host }}"
+  when: vbox_guest_running.stdout == "running"
+
+- name: == VirtualBox == Create Vbox VM
+  shell: vboxmanage createvm --name "{{ inventory_hostname }}" --register --ostype RedHat_64
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Modifying Vbox VM
+  shell: vboxmanage modifyvm "{{ inventory_hostname }}" --memory "{{ vbox_guest_memory }}" --cpus "{{ vbox_guest_vcpus }}" --pae on --boot1 disk --boot2 dvd --nic1 bridged --nictype1 82543GC --macaddress1 "{{ mac_address | lower | replace(":","") }}" --bridgeadapter1 eth0 --vrde on --vrdeport "{{ vbox_guest_rdp_port }}"
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Adding storage controller
+  shell: vboxmanage storagectl "{{ inventory_hostname }}" --name sata1 --add sata --controller IntelAhci --hostiocache on
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Creating HDD for vbox guest
+  shell: vboxmanage createhd --filename /srv/vboxdisks/"{{ inventory_hostname }}".vdi --size "{{ vbox_guest_disk_size }}" --format VDI --variant Standard 
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Attaching HDD to vbox guest 
+  shell: vboxmanage storageattach "{{ inventory_hostname }}" --storagectl sata1 --port 1 --medium /srv/vboxdisks/"{{ inventory_hostname }}".vdi --device 0 --type hdd
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Adding storage controller
+  shell: vboxmanage storagectl "{{ inventory_hostname }}" --name ide1 --add ide --controller PIIX3  --bootable on
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Attaching ISO "{{ iso_image }}" to vbox guest 
+  shell: vboxmanage storageattach "{{ inventory_hostname }}" --storagectl ide1 --port 1 --medium {{ mirror_nfs_local }}/centos/{{ centos_dist }}/isos/{{ centos_arch }}/{{ iso_image }} --device 0 --type dvddrive
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == producing magic keyboard script
+  template:
+    src: ../templates/vbox-keyboard-send.j2
+    dest: /var/tmp/vbox-keyboard-send-{{ inventory_hostname }}
+    mode: 0755
+  delegate_to: "{{ vbox_host }}"  
+
+- name: == VirtualBox == Starting Vbox guest
+  shell: vboxmanage startvm "{{ inventory_hostname }}" --type headless
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == waiting ...
+  pause:
+    seconds: 5
+
+- name: == VirtualBox == sending esc key
+  shell: vboxmanage controlvm "{{ inventory_hostname }}" keyboardputscancode 01 81  
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == invoking keyboard script
+  shell: /var/tmp/vbox-keyboard-send-{{ inventory_hostname }}
+  delegate_to: "{{ vbox_host }}"
+
+- name: == VirtualBox == Waiting for sshd to be available on the deployed node
+  wait_for: port=22 host={{ ip }} timeout=1200 
+  delegate_to: "{{ vbox_host }}"
+

@@ -1,0 +1,4 @@
+{% for host in groups['all'] %}
+local-data: "{{ hostvars[host].name }}.   IN      A       {{ hostvars[host].ip }}"
+{% endfor %}
+

@@ -1,0 +1,13 @@
+# Unbound ansible role variables
+
+# By default allowing recursion for everybody
+unbound_acl_allow: "0.0.0.0/0"
+
+# Overriding records in local cache
+unbound_cache_override:
+  - host: myhost.myexample.com
+    ip: "192.168.1.1"
+
+# If unbound must forward to a specific dns or not and which one
+unbound_use_forwarder: False
+unbound_forwarder_ip: "8.8.8.8"
