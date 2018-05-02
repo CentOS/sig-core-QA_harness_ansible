@@ -56,6 +56,10 @@ logvol /  --fstype="ext4" --size=8200 --name=root --vgname=vg_{{ inventory_hostn
 logvol swap  --fstype="swap" --size=2136 --name=swap --vgname=vg_{{ inventory_hostname_short }}
 {% endif %}
 
+{% if enable_CR == "1" %}
+repo --name=CR --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/cr/{{ centos_arch }}/
+{% endif %}
+
 reboot
 
 %packages
@@ -73,6 +77,10 @@ echo "ssh-dss AAAAB3NzaC1kc3MAAACBAKfpC9qHZqt+oBg4dU3uYCldKEZQhepkm+jPuSFCawJZSF
 chmod 700 /root/.ssh
 chmod 600 /root/.ssh/* ; chcon -v -R -t ssh_home_t /root/.ssh**
 
+{% if enable_CR == "1" %}
+sed -i s/enabled=0/enabled=1/ /etc/yum.repos.d/CentOS-CR.repo
+sed -i s/gpgcheck=1/gpgcheck=0/ /etc/yum.repos.d/CentOS-CR.repo
+{% endif %}
 
 %end
 

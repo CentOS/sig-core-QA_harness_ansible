@@ -11,7 +11,7 @@ if {$force_conservative} {
 
 
 set timeout -1
-spawn ssh {{ blade_mm_user }}@{{ blade_mm_hostname }}
+spawn ssh -o Ciphers=3des-cbc {{ blade_mm_user }}@{{ blade_mm_hostname }}
 match_max 100000
 expect -exact "{{ blade_mm_user }}@{{ blade_mm_hostname }}'s password: "
 send -- "{{ blade_mm_pass }}\r"
