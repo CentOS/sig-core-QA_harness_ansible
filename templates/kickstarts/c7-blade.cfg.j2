@@ -42,6 +42,12 @@ autopart --type=lvm
 # Partition clearing information
 clearpart --all --initlabel 
 
+{% if enable_CR == "1" %}
+repo --name=CR --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/cr/{{ centos_arch }}/
+{% endif %}
+
+
+
 #Powering down at the end
 reboot
 
@@ -58,6 +64,12 @@ mkdir /root/.ssh
 echo "ssh-dss AAAAB3NzaC1kc3MAAACBAKfpC9qHZqt+oBg4dU3uYCldKEZQhepkm+jPuSFCawJZSFQag8zrpUnVuC03O7ExwJEReVhutY0Ta3H+UUKk82MBLLM1dDlgqKauWS+d5mAQftuuPZplsYAuonXO/PEbyHvgNbfYUq1jlw6jcs5u1x81WkyUPjnsyssl9b+YWgG5AAAAFQDNa5D11x1zpYgbSCmk2aL77pFdAwAAAIAVqb+TCgth7Xfuo6k7UiU8tkgDSn8F+EFUar6buhBgziPi69CjW6QQvpkqx5sV3Z76e+ADjBIjNp7UTKF59BIUe8ZcatL2MpHPH5SlZkvcyE61DII2CvTck4PC2hOqvr+r8id1mOfpTM9rtq5YeulMOlfdG7jhtf/PgnFWyWxYzQAAAIBvlDZucWwfMElKodytAi8Pa2iZeITgIRffCGFiMV/qj9Yslai25d3ufexkgaQITQY5V17PZi6v8ofBgt/fqOYeE7MNFsJzVQEDM7dVoyMyDPh3Xg19NrysqzfRhKMIsqArK3PqZcklj9dPRvxRqrzkELpneiQXnsWHVRR4GajcTg== qa@admin.bc.dev.centos.org" >> /root/.ssh/authorized_keys
 chmod 700 /root/.ssh
 chmod 600 /root/.ssh/* ; chcon -v -R -t ssh_home_t /root/.ssh**
+
+{% if enable_CR == "1" %}
+sed -i s/enabled=0/enabled=1/ /etc/yum.repos.d/CentOS-CR.repo
+sed -i s/gpgcheck=1/gpgcheck=0/ /etc/yum.repos.d/CentOS-CR.repo
+{% endif %}
+
 
 %end
 
