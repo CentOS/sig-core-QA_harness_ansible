@@ -43,9 +43,9 @@ volgroup c6kvm-vg --pesize=32768 pv.2
 logvol / --fstype=ext4 --name=lv_root --vgname=c6kvm-vg --grow --size=1024 --maxsize=51200
 logvol swap --name=lv_swap --vgname=c6kvm-vg --grow --size=1008 --maxsize=2016
 
-+{% if enable_CR == "1" %}
-+repo --name=CR --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/cr/{{ centos_arch }}/
-+{% endif %}
+{% if enable_CR == "1" %}
+repo --name=CR --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/cr/{{ centos_arch }}/
+{% endif %}
 
 reboot
 

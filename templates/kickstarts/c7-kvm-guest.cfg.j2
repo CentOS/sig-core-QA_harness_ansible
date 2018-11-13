@@ -57,6 +57,7 @@ logvol swap  --fstype="swap" --size=2136 --name=swap --vgname=vg_{{ inventory_ho
 {% endif %}
 
 {% if enable_CR == "1" %}
+repo --name=updates --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/updates/{{ centos_arch }}/
 repo --name=CR --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/cr/{{ centos_arch }}/
 {% endif %}
 
