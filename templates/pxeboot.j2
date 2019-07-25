@@ -11,9 +11,9 @@ LABEL local
 
 LABEL {{ inventory_hostname}}-deploy
         MENU LABEL CentOS {{ centos_dist }} {{ centos_arch }}- DevTools Kickstart for {{ inventory_hostname }}
-        kernel CentOS/{{ centos_dist }}/{{ centos_arch}}/vmlinuz
-         {% if centos_dist == 7 -%}
-	append initrd=CentOS/7/{{ centos_arch }}/initrd.img net.ifnames=0 biosdevname=0 ip=eth0:dhcp inst.ks={{ ks_url }}/{{ inventory_hostname }}-ks.cfg 
+        kernel boot/qa//{{ centos_dist }}/{{ centos_arch}}/vmlinuz
+         {% if centos_dist == 7 or centos_dist == 8 -%}
+	append initrd=boot/qa/{{ centos_dist }}/{{ centos_arch }}/initrd.img net.ifnames=0 biosdevname=0 ip=eth0:dhcp inst.ks={{ ks_url }}/{{ inventory_hostname }}-ks.cfg 
          {% else -%}
         append initrd=CentOS/{{ centos_dist }}/{{ centos_arch }}/initrd.img ksdevice=eth0 ip=dhcp ks={{ ks_url }}/{{ inventory_hostname }}-ks.cfg
          {% endif %}

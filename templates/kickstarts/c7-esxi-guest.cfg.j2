@@ -42,6 +42,7 @@ autopart --type=lvm
 clearpart --all --initlabel 
 
 {% if enable_CR == "1" %}
+repo --name=updates --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/updates/{{ centos_arch }}/
 repo --name=CR --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/cr/{{ centos_arch }}/
 {% endif %}
 

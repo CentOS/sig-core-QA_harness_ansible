@@ -16,8 +16,11 @@ virt-install \
   --autostart --wait=-1 \
   --noautoconsole \
   --initrd-inject=/var/lib/libvirt/local-kickstarts/{{ inventory_hostname }}.cfg \
-  --extra-args "console=ttyS0 ks=file:/{{ inventory_hostname }}.cfg" \
+  --extra-args "console=ttyS0 net.ifnames=0 ks=file:/{{ inventory_hostname }}.cfg" \
+{% if centos_dist == 8 %}
+  --location  http://qa.centos.org/centos/{{ centos_dist }}/BaseOS/{{ centos_arch }}/os/ 
+{% else %}
   --location  {{ http_mirror_baseurl }}/{{ centos_dist }}/os/{{ centos_arch }}/ 
-
+{% endif %}
 
 

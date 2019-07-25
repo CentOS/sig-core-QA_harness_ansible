@@ -33,7 +33,7 @@
   delegate_to: "{{ vbox_host }}"
 
 - name: == VirtualBox == Modifying Vbox VM
-  shell: vboxmanage modifyvm "{{ inventory_hostname }}" --memory "{{ vbox_guest_memory }}" --cpus "{{ vbox_guest_vcpus }}" --pae on --boot1 disk --boot2 net --nic1 bridged --nictype1 82543GC --macaddress1 "{{ mac_address | lower | replace(":","") }}" --bridgeadapter1 eth0 --vrde on --vrdeport "{{ vbox_guest_rdp_port }}"
+  shell: vboxmanage modifyvm "{{ inventory_hostname }}" --memory "{{ vbox_guest_memory }}" --cpus "{{ vbox_guest_vcpus }}" --pae on --boot1 disk --boot2 net --nic1 bridged --nictype1 82543GC --macaddress1 "{{ mac_address | lower | replace(":","") }}" --bridgeadapter1 "{{ vbox_host_bridge }}" --vrde on --vrdeport "{{ vbox_guest_rdp_port }}"
   delegate_to: "{{ vbox_host }}"
 
 - name: == VirtualBox == Adding storage controller
@@ -54,5 +54,5 @@
 
 - name: == VirtualBox == Waiting for sshd to be available on the deployed node
   wait_for: port=22 host={{ ip }} timeout=2400 
-  delegate_to: "{{ vbox_host }}"
+  delegate_to: "{{ deploy_node }}"
 

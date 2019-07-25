@@ -27,7 +27,7 @@
   delegate_to: "{{ esxi_host }}"
 
 - name: == ESXi == Creating virtual disk for ESXi guest
-  raw: vmkfstools --createvirtualdisk 10000M --diskformat thin /vmfs/volumes/{{ esxi_vmfs_vol }}/{{ inventory_hostname}}/{{ inventory_hostname }}.vmdk
+  raw: vmkfstools --createvirtualdisk 20000M --diskformat thin /vmfs/volumes/{{ esxi_vmfs_vol }}/{{ inventory_hostname}}/{{ inventory_hostname }}.vmdk
   delegate_to: "{{ esxi_host }}"
 
 - name: == ESXi == Generating local VMX template
@@ -37,7 +37,7 @@
   delegate_to: "{{ ks_node }}"
 
 - name: == ESXi == Importing VMX file to esxi host
-  raw: wget -q -O /vmfs/volumes/{{ esxi_vmfs_vol }}/{{ inventory_hostname }}/{{ inventory_hostname }}.vmx http://mirror.centos.org/vmx/{{ inventory_hostname }}.vmx
+  raw: wget -q -O /vmfs/volumes/{{ esxi_vmfs_vol }}/{{ inventory_hostname }}/{{ inventory_hostname }}.vmx http://{{ ks_node }}/qa/vmx/{{ inventory_hostname }}.vmx
   delegate_to: "{{ esxi_host }}"
 
 - name: == ESXi == Registering ESXi guest
@@ -45,8 +45,16 @@
   delegate_to: "{{ esxi_host }}"
 
 - name: == ESXi == Starting VM
-  raw: vim-cmd vmsvc/power.on $(vim-cmd vmsvc/getallvms|grep {{ inventory_hostname }}| awk '{print $1}')
+  raw: vim-cmd vmsvc/power.on $(vim-cmd vmsvc/getallvms|grep {{ inventory_hostname }}| awk '{print $1}') 
   delegate_to: "{{ esxi_host }}"
+
+- name: == ESXi == Waiting to answer question about moving/copying
+  pause:
+    seconds: 10
+
+#- name: == ESXi == Moving VM
+#  raw: vim-cmd vmsvc/message $(vim-cmd vmsvc/getallvms|grep {{ inventory_hostname }}| awk '{print $1}') 12 2
+#  delegate_to: "{{ esxi_host }}"
 
 - name: == ESXi == Waiting for sshd to be available on the deployed node
   wait_for: port=22 host={{ ip }} timeout=1800 
