@@ -4,16 +4,32 @@ ignoredisk --only-use=vda
 bootloader --location=mbr --boot-drive=vda
 # Partition clearing information
 clearpart --all --initlabel
+
+{% if 'aarch64' in inventory_hostname %}
+part /boot/efi --fstype="vfat" --ondisk=vda --size=200
+{% endif %}
+
+{% if 'ppc' in inventory_hostname %}
+part prepboot --asprimary --fstype=prepboot --size=10
+part /boot --fstype="ext4" --size=1024
+part pv.8 --fstype="lvmpv" --size=6000 --grow
+volgroup vg_{{ inventory_hostname_short}} --pesize=4096 pv.8
+logvol swap  --fstype="swap" --size=2112 --name=swap --vgname=vg_{{ inventory_hostname_short }}
+logvol /  --fstype="ext4" --size=3000 --grow --name=root --vgname=vg_{{ inventory_hostname_short }}
+
+{% else %}
 part /boot --fstype="ext4" --ondisk=vda --size=1024
 part pv.14 --fstype="lvmpv" --ondisk=vda --size=10000 --grow
-volgroup vg_test --pesize=4096 pv.14
-logvol /  --fstype="ext4" --size=10000 --grow --name=root --vgname=vg_test
-logvol swap  --fstype="swap" --size=2048 --name=swap --vgname=vg_test
+volgroup vg_{{ inventory_hostname_short }} --pesize=4096 pv.14
+logvol /  --fstype="ext4" --size=8200 --grow --name=root --vgname=vg_{{ inventory_hostname_short }}
+logvol swap  --fstype="swap" --size=2136 --name=swap --vgname=vg_{{ inventory_hostname_short }}
+{% endif %}
+
 
 # Use text mode install
 text
 # Use network installation
-url --url="http://qa.centos.org/centos/8/BaseOS/x86_64/os/"
+url --url="http://qa.centos.org/centos/8/BaseOS/{{ centos_arch }}/os/"
 # Keyboard layouts
 keyboard --vckeymap=us --xlayouts=''
 # System language
