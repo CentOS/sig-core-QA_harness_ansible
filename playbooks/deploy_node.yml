@@ -4,6 +4,13 @@
   become: True
 
   tasks:
+    - name: Adding the host entry on QA deploy node
+      lineinfile: 
+        dest: /etc/hosts 
+        regexp: "^{{ ip }} {{ inventory_hostname }}" 
+        line: "{{ ip }} {{ inventory_hostname }}"
+      delegate_to: "{{ deploy_node }}"
+
     - include: ../tasks/deploy-kvm-guest.yml
       when: "'kvm-guests' in group_names" 
       
@@ -18,6 +25,10 @@
       
     - include: ../tasks/deploy-xen-guest.yml
       when: "'xen-guests' in group_names"    
-      
+
+    - include: ../tasks/deploy-cloud-guest.yml
+      when: "'cloud-guests' in group_names"    
+      tags:
+        - cloud
     - include: ../tasks/deploy-vbox-guest-iso.yml
       when: "'iso-guests' in group_names" 

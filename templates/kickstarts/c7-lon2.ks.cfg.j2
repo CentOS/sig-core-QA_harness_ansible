@@ -3,7 +3,7 @@ text
 # System authorization information
 auth --enableshadow --passalgo=sha512
 # Use network installation
-url --url="http://mirror.centos.org/centos/7/os/x86_64/"
+url --url="http://qa.centos.org/centos/7/os/x86_64/"
 # Run the Setup Agent on first boot
 firstboot --disable
 ignoredisk --only-use=sda
@@ -54,8 +54,8 @@ logvol /var/lib/libvirt/images --fstype="ext4" --size 2048 --grow --name=libvirt
 {% endif %}
 
 
-repo --name="base" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
-repo --name="updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
+repo --name="base" --baseurl=http://qa.centos.org/centos/7/os/x86_64/ --cost=100
+repo --name="updates" --baseurl=http://qa.centos.org/centos/7/updates/x86_64/ --cost=100
 
 # Ensuring reboot
 reboot

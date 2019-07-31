@@ -12,6 +12,11 @@
   ignore_errors: yes
   delegate_to: "{{ kvm_host }}"
 
+- name: == KVM == undefining UEFI VMs with nvram
+  shell: "virsh undefine --nvram {{ inventory_hostname }}"
+  when: '"aarch64" in inventory_hostname'
+  delegate_to: "{{ kvm_host }}"
+
 - name: == KVM == Creating kickstart to provision VM[s]
   template: 
     src: "../templates/kickstarts/c{{ centos_dist }}-kvm-guest.cfg.j2"

@@ -68,30 +68,10 @@ pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
 
 %post
 
-grep -q "enabled=1" /etc/yum.repos.d/CentOS-Base.repo
+{% if centos_arch == 'ppc64le' or centos_arch == 'aarch64' %}
+echo "{{ mirrorlist_ip }} mirrorlist.centos.org" >> /etc/hosts
+{% endif %}
 
-if [ "$?" -ne "0" ] ; then
-cat > /etc/yum.repos.d/CentOS-Base.repo << EOF
-[BaseOS]
-name=BaseOS-local
-baseurl=http://qa.centos.org/centos/8/BaseOS/x86_64/os/
-enabled=1
-gpgcheck=0
-
-[AppStream]
-name=AppStream-local
-baseurl=http://qa.centos.org/centos/8/AppStream/x86_64/os/
-enabled=1
-gpgcheck=0
-
-[Devel]
-name=Devel-local
-baseurl=http://qa.centos.org/centos/8/Devel/x86_64/os/
-enabled=1
-gpgcheck=0
-
-EOF
-fi
 
 mkdir /root/.ssh
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDUyaH+XuDDERZCF3B55+e/kVr3ly7jFjMp53dfYUZro7MZdV0JwSMk+6w1Wo4qF1SsVECpUm5hYtoVMAzcWt0WhmBnaflmNNZjTn7RGdA/jqjOe5dVGHDKQkRdvFL0hHP4AJUb3kjKbEfhql1JUsoOX7xFtf873/qi8699o3cCg11ln3SzbmnsVPVB0XT9mnavwgz+/CJmYGVBYfxFbObS/N5ENvdQLMk5N64E7D/ClAE3b69JprB8cKygMWuqJjL67EtvV/KsTd2M02N3jtIP797LdAZvSNt4FwAm41yb3W6vajS0NAk461ytt+dnnDVchCj9GqscwEJRCsuliWlf qa@qa.centos.org" >> /root/.ssh/authorized_keys

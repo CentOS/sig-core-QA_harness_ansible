@@ -6,10 +6,10 @@ auth --enableshadow --passalgo=sha512
 
 # Use network installation
 {% if 'nfs' in inventory_hostname %}
-nfs --server=mirror.centos.org --dir=/srv/mirrors/mirror.centos.org/centos/7/os/x86_64/
+nfs --server=qa.centos.org --dir=/srv/mirrors/qa.centos.org/centos/7/os/x86_64/
 {% endif %}
 {% if 'http' in inventory_hostname %}
-url --url="http://mirror.centos.org/centos/7/os/x86_64/"
+url --url="http://qa.centos.org/centos/7/os/x86_64/"
 {% endif %}
 
 # Run the Setup Agent on first boot
@@ -40,8 +40,8 @@ logvol /home  --fstype="ext4" --size=2412 --name=home --vgname=vg_{{ inventory_h
 logvol /  --fstype="ext4" --size=8200 --name=root --vgname=vg_{{ inventory_hostname_short }}
 logvol swap  --fstype="swap" --size=2136 --name=swap --vgname=vg_{{ inventory_hostname_short }}
 
-#repo --name="base" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
-#repo --name="updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
+#repo --name="base" --baseurl=http://qa.centos.org/centos/7/os/x86_64/ --cost=100
+#repo --name="updates" --baseurl=http://qa.centos.org/centos/7/updates/x86_64/ --cost=100
 
 reboot
 

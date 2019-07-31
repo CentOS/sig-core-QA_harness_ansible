@@ -24,7 +24,7 @@ virt-install \
 {% if centos_dist == 8 %}
   --location  http://qa.centos.org/centos/{{ centos_dist }}/BaseOS/{{ centos_arch }}/os/ 
 {% else %}
-  --location  {{ http_mirror_baseurl }}/{{ centos_dist }}/os/{{ centos_arch }}/ 
+  --location  http://qa.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/ 
 {% endif %}
 
 

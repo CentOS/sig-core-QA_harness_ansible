@@ -6,7 +6,7 @@ auth --enableshadow --passalgo=sha512
 
 # Use network installation
 {% if 'nfs' in inventory_hostname %}
-nfs --server=mirror.centos.org --dir=/srv/mirrors/mirror.centos.org/centos/7/os/x86_64/
+nfs --server=qa.centos.org --dir=/srv/mirrors/qa.centos.org/centos/7/os/x86_64/
 {% endif %}
 {% if 'http' in inventory_hostname %}
 url --url="{{ http_mirror_baseurl }}/{{ centos_dist }}/os/{{ centos_arch }}/"

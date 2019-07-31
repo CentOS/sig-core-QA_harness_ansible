@@ -6,13 +6,13 @@ text
 # Use NFS installation media
   #nfs --server=repo.centos.qa --dir=/srv/CentOS/7/os/x86_64/
 {% if 'nfs' in inventory_hostname %}
-nfs --server=mirror.centos.org --dir=/srv/mirrors/mirror.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/
+nfs --server=qa.centos.org --dir=/srv/mirrors/qa.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/
 {% endif %}
 {% if 'http' in inventory_hostname %}
-url --url="http://mirror.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/"
+url --url="http://qa.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/"
 {% endif %}
 {% if 'ftp' in inventory_hostname %}
-url --url="ftp://mirror.centos.org/mirror.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/"
+url --url="ftp://qa.centos.org/qa.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/"
 {% endif %}
 #
 lang en_US.UTF-8
