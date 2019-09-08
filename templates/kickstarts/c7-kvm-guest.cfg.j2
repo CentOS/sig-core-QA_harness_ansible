@@ -77,6 +77,10 @@ chrony
 
 %post
 
+{% if centos_arch == 'ppc64' or centos_arch == 'ppc64le' or centos_arch == 'aarch64' %}
+echo "{{ mirrorlist_ip }} mirrorlist.centos.org" >> /etc/hosts
+{% endif %}
+
 mkdir /root/.ssh
 echo "ssh-dss AAAAB3NzaC1kc3MAAACBAKfpC9qHZqt+oBg4dU3uYCldKEZQhepkm+jPuSFCawJZSFQag8zrpUnVuC03O7ExwJEReVhutY0Ta3H+UUKk82MBLLM1dDlgqKauWS+d5mAQftuuPZplsYAuonXO/PEbyHvgNbfYUq1jlw6jcs5u1x81WkyUPjnsyssl9b+YWgG5AAAAFQDNa5D11x1zpYgbSCmk2aL77pFdAwAAAIAVqb+TCgth7Xfuo6k7UiU8tkgDSn8F+EFUar6buhBgziPi69CjW6QQvpkqx5sV3Z76e+ADjBIjNp7UTKF59BIUe8ZcatL2MpHPH5SlZkvcyE61DII2CvTck4PC2hOqvr+r8id1mOfpTM9rtq5YeulMOlfdG7jhtf/PgnFWyWxYzQAAAIBvlDZucWwfMElKodytAi8Pa2iZeITgIRffCGFiMV/qj9Yslai25d3ufexkgaQITQY5V17PZi6v8ofBgt/fqOYeE7MNFsJzVQEDM7dVoyMyDPh3Xg19NrysqzfRhKMIsqArK3PqZcklj9dPRvxRqrzkELpneiQXnsWHVRR4GajcTg== qa@admin.bc.dev.centos.org" >> /root/.ssh/authorized_keys
 chmod 700 /root/.ssh

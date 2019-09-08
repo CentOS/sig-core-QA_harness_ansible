@@ -15,6 +15,7 @@
 - name: == Cloud Image == undefining UEFI VMs with nvram
   shell: "virsh undefine --nvram {{ inventory_hostname }}"
   when: '"aarch64" in inventory_hostname'
+  ignore_errors: yes
   delegate_to: "{{ kvm_host }}"
 
 - name: == Cloud Image == Creating structure for cloud-init nocloud 
