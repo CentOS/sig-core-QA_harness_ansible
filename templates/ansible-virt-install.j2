@@ -16,12 +16,12 @@ virt-install \
   --autostart --wait=-1 \
   --noautoconsole \
   --initrd-inject=/var/lib/libvirt/local-kickstarts/{{ inventory_hostname }}.cfg \
-{% if 'ppc64le' in inventory_hostname %}
+{% if 'ppc64le' in inventory_hostname or 'power9' in inventory_hostname %}
   --extra-args "console=hvc0 console=hvc1 net.ifnames=0 ks=file:/{{ inventory_hostname }}.cfg" \
 {% else %}
   --extra-args "console=ttyS0 net.ifnames=0 ks=file:/{{ inventory_hostname }}.cfg" \
 {% endif %}
-{% if centos_dist == 8 %}
+{% if centos_dist == 8 or centos_dist == '8-stream' %}
   --location  http://qa.centos.org/centos/{{ centos_dist }}/BaseOS/{{ centos_arch }}/os/ 
 {% else %}
   --location  http://qa.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/ 

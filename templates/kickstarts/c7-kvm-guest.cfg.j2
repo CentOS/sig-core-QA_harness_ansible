@@ -43,7 +43,7 @@ clearpart --all --initlabel
 part /boot/efi --fstype="vfat" --ondisk=vda --size=200
 {% endif %}
 
-{% if 'ppc' in inventory_hostname %}
+{% if 'ppc' in inventory_hostname or 'power9' in inventory_hostname %}
 part prepboot --asprimary --fstype=prepboot --size=10
 part /boot --fstype="ext4" --size=500
 part pv.8 --fstype="lvmpv" --size=6000 --grow
@@ -77,7 +77,7 @@ chrony
 
 %post
 
-{% if centos_arch == 'ppc64' or centos_arch == 'ppc64le' or centos_arch == 'aarch64' %}
+{% if centos_arch == 'ppc64' or centos_arch == 'ppc64le' or centos_arch == 'power9' or centos_arch == 'aarch64' %}
 echo "{{ mirrorlist_ip }} mirrorlist.centos.org" >> /etc/hosts
 {% endif %}
 
