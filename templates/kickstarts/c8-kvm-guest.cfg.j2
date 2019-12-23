@@ -25,6 +25,10 @@ logvol /  --fstype="ext4" --size=8200 --grow --name=root --vgname=vg_{{ inventor
 logvol swap  --fstype="swap" --size=2136 --name=swap --vgname=vg_{{ inventory_hostname_short }}
 {% endif %}
 
+{% if enable_CR == "1" %}
+repo --name=install-BaseOS --baseurl=http://qa.centos.org/centos/{{ centos_dist }}/BaseOS/{{ centos_arch }}/os/
+repo --name=install-CR --baseurl=http://qa.centos.org/centos/{{ centos_dist }}/cr/{{ centos_arch }}/os/
+{% endif %}
 
 # Use text mode install
 text
