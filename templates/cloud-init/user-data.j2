@@ -15,8 +15,8 @@ ssh_authorized_keys:
   - {{ qa_ssh_pubkey }}
   
 # For QA we want to allow root for t_functional
-disable_root: false
-users:
-  - name: root
-    ssh_authorized_keys:
-      - {{ qa_ssh_pubkey }}
+#disable_root: false
+#users:
+#  - name: root
+#    ssh_authorized_keys:
+#      - {{ qa_ssh_pubkey }}
