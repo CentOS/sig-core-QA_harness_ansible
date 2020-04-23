@@ -1,0 +1,102 @@
+---
+- hosts: all
+  become: True
+  gather_facts: False
+  # All these variables can be overriden with --extra-vars call, like in jenkins through parametrized jobs
+  vars:
+    ks_url: "https://git.centos.org/fork/arrfab/centos/kickstarts/raw/c7-kickstart/f/CentOS-7-GenericCloud.ks"
+    arch: x86_64
+    month: 2003
+    dist_release: 7
+    http_host: qa.centos.org  #pointing to qa for normal tree, but also can be mirrorsnap.centos.org/<date> 
+  tasks:
+    - block:
+        - name: Download kickstart
+          get_url:
+            url: "{{ ks_url }}"
+            dest: "/var/tmp/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.ks"
+
+        - name: Patching kickstart file for url to use
+          replace:
+            path: "/var/tmp/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.ks"
+            regexp: mirrorsnap.centos.org/DATESTAMP
+            replace: "{{ http_host }}"
+
+        - name: Patching kickstart file for correct arch
+          replace:
+            path: "/var/tmp/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.ks"
+            regexp: ARCH
+            replace: "{{ arch }}"
+
+        - name: Patching kickstart for uefi part for aarch64
+          replace:
+            path: "/var/tmp/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.ks"
+            regexp: '^#part /boot/efi'
+            replace: "part /boot/efi"
+          when: "arch== 'aarch64'"  
+
+        - name: Destroying previous cloud VM if needed
+          virt:
+            name: "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}"
+            command: destroy
+          ignore_errors: True
+        - name: Destroying previous cloud VM if needed
+          virt:
+            name: "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}"
+            command: undefine
+          ignore_errors: True
+
+        - name: undefining UEFI VMs with nvram
+          shell: "virsh undefine --nvram CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}"
+          when: "arch == 'aarch64'"
+          ignore_errors: yes
+
+        - name: Building Cloud image CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}
+          shell: |
+            virt-install \
+              --name CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}  \
+              --vcpus 4 \
+              --memory memory=4096 \
+              --disk path=/var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2,size=8,format=qcow2,device=disk,bus=virtio,cache=none \
+              --nographics \
+              --network network=default \
+              --hvm --accelerate \
+              --wait=-1 \
+              --noreboot \
+              --noautoconsole \
+              --initrd-inject=/var/tmp/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.ks \
+              --extra-args "console=hvc0 console=ttyAMA0 console=ttyS0 net.ifnames=0 ks=file:/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.ks" \
+              --location  http://{{ http_host }}/centos/{{ dist_release }}/os/{{ arch }}/ 
+          tags:
+            - image_build
+
+        - name: Ensuring we have a directory to process and stage locally files
+          file:
+            path: /var/lib/libvirt/images/staging
+            state: directory
+          tags:
+            - image_convert
+
+        - name: Sparsifying images and compressing
+          shell: "{{ item }}"
+          args:
+            chdir: /var/lib/libvirt/images/staging
+          with_items:
+            - "virt-sparsify /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 --tmp=/var/lib/libvirt/images/staging/"
+            - "virt-sparsify /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2c --compress --tmp=/var/lib/libvirt/images/staging/"
+          tags:
+            - image_convert    
+
+        - name: Retrieve locally the CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }} artifacts
+          fetch:
+            dest: "/srv/staging/{{ item }}"
+            flat: True
+            src: "/var/lib/libvirt/images/staging/{{ item }}"
+          with_items:
+            - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2"
+            - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2c"
+          tags:
+            - image_fetch
+
+      delegate_to: "{{ kvm_host }}"
+ 
