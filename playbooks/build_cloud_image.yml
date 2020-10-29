@@ -87,24 +87,25 @@
           tags:
             - image_convert
 
-        - name: Converting to Raw format for AMI upload to S3
-          shell: "qemu-img convert /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.raw"
-          args:
-            chdir: /var/lib/libvirt/images/staging
-          tags:
-            - ami
-
         - name: Retrieve locally the CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }} artifacts
           fetch:
             dest: "/srv/staging/{{ item }}"
             flat: True
             src: "/var/lib/libvirt/images/staging/{{ item }}"
           with_items:
-            - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.raw"
             - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2"
             - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2c"
           tags:
             - image_fetch
 
       delegate_to: "{{ kvm_host }}"
- 
+
+    - name: Converting to Raw format for AMI upload to S3
+      shell: "qemu-img convert CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.raw"
+      args:
+        chdir: /srv/staging
+      tags:
+        - ami
+      delegate_to: localhost  
+
+
