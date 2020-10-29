@@ -4,9 +4,9 @@
   gather_facts: False
   # All these variables can be overriden with --extra-vars call, like in jenkins through parametrized jobs
   vars:
-    ks_url: "https://git.centos.org/fork/arrfab/centos/kickstarts/raw/c7-kickstart/f/CentOS-7-GenericCloud.ks"
+    ks_url: "https://git.centos.org/centos/kickstarts/raw/master/f/CentOS-7-GenericCloud.ks"
     arch: x86_64
-    month: 2003
+    month: 2009
     dist_release: 7
     http_host: qa.centos.org  #pointing to qa for normal tree, but also can be mirrorsnap.centos.org/<date> 
   tasks:
@@ -100,12 +100,5 @@
 
       delegate_to: "{{ kvm_host }}"
 
-    - name: Converting to Raw format for AMI upload to S3
-      shell: "qemu-img convert CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.raw"
-      args:
-        chdir: /srv/staging
-      tags:
-        - ami
-      delegate_to: localhost  
 
 
