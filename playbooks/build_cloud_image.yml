@@ -85,7 +85,14 @@
             - "virt-sparsify /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 --tmp=/var/lib/libvirt/images/staging/"
             - "virt-sparsify /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2c --compress --tmp=/var/lib/libvirt/images/staging/"
           tags:
-            - image_convert    
+            - image_convert
+
+        - name: Converting to Raw format for AMI upload to S3
+          shell: "qemu-img convert /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2.raw"
+          args:
+            chdir: /var/lib/libvirt/images/staging
+          tags:
+            - ami
 
         - name: Retrieve locally the CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }} artifacts
           fetch:
@@ -93,6 +100,7 @@
             flat: True
             src: "/var/lib/libvirt/images/staging/{{ item }}"
           with_items:
+            - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.raw"
             - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2"
             - "CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2c"
           tags:
