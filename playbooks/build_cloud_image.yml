@@ -88,7 +88,7 @@
             - image_convert
 
         - name: Converting to Raw format for AMI upload to S3
-          shell: "qemu-img convert /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2.raw"
+          shell: "qemu-img convert /var/lib/libvirt/images/CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.qcow2 CentOS-{{ dist_release }}-{{ arch }}-GenericCloud-{{ month }}.raw"
           args:
             chdir: /var/lib/libvirt/images/staging
           tags:
