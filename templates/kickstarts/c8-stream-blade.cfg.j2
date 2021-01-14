@@ -1,4 +1,6 @@
 #version=RHEL8
+auth --enableshadow --passalgo=sha512
+
 # System bootloader configuration
 bootloader --location=mbr --boot-drive=sda
 # Partition clearing information
@@ -41,6 +43,7 @@ reboot
 %packages
 @^minimal-environment
 @standard
+wget
 
 %end
 

@@ -1,4 +1,6 @@
 #version=RHEL8
+auth --enableshadow --passalgo=sha512
+
 ignoredisk --only-use=sda
 # System bootloader configuration
 bootloader --location=mbr --boot-drive=sda
@@ -37,6 +39,7 @@ reboot
 %packages
 @^minimal-environment
 @standard
+wget
 
 %end
 
