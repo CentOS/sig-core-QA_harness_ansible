@@ -15,6 +15,7 @@ raid pv.1310 --device=pv00 --fstype="lvmpv" --level=RAID1 raid.1296 raid.1303
 volgroup vg_qablade --pesize=4096 pv.1310
 logvol swap --fstype="swap" --size=4096 --name=swap --vgname=vg_qablade
 logvol / --fstype="ext4" --grow --size=1024 --name=root --vgname=vg_qablade
+logvol /home --fstype="ext4" --size=2048 --name=home --vgname=vg_qablade
 
 # Use text mode install
 text

@@ -43,6 +43,8 @@ autopart --type=lvm
 # Partition clearing information
 clearpart --all --initlabel 
 
+repo --name=qa-updates --baseurl={{ http_mirror_baseurl }}/{{ centos_dist }}/updates/{{ centos_arch }}/
+
 # reboot at the end
 reboot
 
