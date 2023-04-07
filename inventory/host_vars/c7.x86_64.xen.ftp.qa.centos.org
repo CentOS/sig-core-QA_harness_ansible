@@ -1,0 +1,2 @@
+ip: 192.168.205.6
+name: c7.x86_64.xen.ftp.qa.centos.org

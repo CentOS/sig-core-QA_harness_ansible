@@ -1,0 +1,2 @@
+name: iscsi.qa.centos.org
+ip: 192.168.204.20

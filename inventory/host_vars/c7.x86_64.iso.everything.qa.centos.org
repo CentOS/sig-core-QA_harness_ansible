@@ -1,0 +1,5 @@
+mac_address: 08:00:27:55:32:14
+ip: 192.168.205.48
+name: c7.x86_64.iso.everything.qa.centos.org
+vbox_guest_rdp_port: 5014
+iso_image: CentOS-7-x86_64-Everything-1611.iso

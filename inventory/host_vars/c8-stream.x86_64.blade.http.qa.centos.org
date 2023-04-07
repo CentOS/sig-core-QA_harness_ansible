@@ -1,0 +1,8 @@
+netmask: 255.255.252.0
+gateway: 192.168.204.1
+nameserver: 192.168.204.1
+mac_address: 0c:c4:7a:f7:0a:04
+centos_dist: 8-stream
+centos_arch: x86_64
+ip: 192.168.205.59
+name: c8-stream.x86_64.blade.http.qa.centos.org

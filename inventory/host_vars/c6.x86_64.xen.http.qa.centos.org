@@ -1,0 +1,4 @@
+name: c6.x86_64.xen.http.qa.centos.org
+ip: 192.168.205.16
+centos_dist: 6
+centos_arch: x86_64

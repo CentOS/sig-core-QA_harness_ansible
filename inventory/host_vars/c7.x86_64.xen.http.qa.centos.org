@@ -1,0 +1,2 @@
+ip: 192.168.205.1
+name: c7.x86_64.xen.http.qa.centos.org

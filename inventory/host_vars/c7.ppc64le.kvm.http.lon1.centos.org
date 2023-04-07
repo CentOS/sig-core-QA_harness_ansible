@@ -1,0 +1,10 @@
+name: c7.ppc64le.kvm.http.lon1.centos.org
+kvm_host: n15.lon1.centos.org
+http_mirror_baseurl: 'http://mirror.lon1.centos.org/altarch'
+kvm_host_bridge: br_pub
+ip: 172.29.35.199
+netmask: 255.255.252.0
+gateway: 172.29.32.1
+nameserver: 172.29.32.1
+centos_dist: 7
+centos_arch: ppc64le

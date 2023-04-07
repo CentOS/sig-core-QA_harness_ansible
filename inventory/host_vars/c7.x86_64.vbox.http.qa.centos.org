@@ -1,0 +1,4 @@
+mac_address: 08:00:27:55:32:11
+ip: 192.168.205.2
+name: c7.x86_64.vbox.http.qa.centos.org
+vbox_guest_rdp_port: 5011

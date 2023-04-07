@@ -1,0 +1,6 @@
+name: c6.x86_64.vbox.http.qa.centos.org
+ip: 192.168.205.17
+centos_dist: 6
+centos_arch: x86_64
+mac_address: 08:00:27:55:32:05
+vbox_guest_rdp_port: 5005

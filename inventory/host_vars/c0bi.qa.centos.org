@@ -1,0 +1,8 @@
+name: c0bi.qa.centos.org
+ip: 192.168.204.49
+netmask: 255.255.252.0
+gateway: 192.168.204.1
+nameserver: 192.168.204.1
+mac_address: 00:1a:64:f6:55:ee
+centos_dist: 7
+centos_arch: x86_64

@@ -1,0 +1,4 @@
+kvm_guest_centos_dist: 8
+centos_dist: 8-stream
+ip: 192.168.205.56
+name: c8-stream.x86_64.kvm.http.qa.centos.org

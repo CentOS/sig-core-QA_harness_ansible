@@ -1,0 +1,3 @@
+kvm_guest_centos_dist: 7
+ip: 192.168.205.54
+name: c7.x86_64.cloud.http.qa.centos.org

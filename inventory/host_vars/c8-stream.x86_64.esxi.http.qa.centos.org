@@ -1,0 +1,4 @@
+mac_address: 00:50:56:3f:ff:58
+ip: 192.168.205.58
+name: c8-stream.x86_64.esxi.qa.centos.org
+centos_dist: 8-stream

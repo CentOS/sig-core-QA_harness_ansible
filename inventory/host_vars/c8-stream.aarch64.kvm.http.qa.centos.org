@@ -1,0 +1,10 @@
+name: c8-stream.aarch64.kvm.http.qa.centos.org
+kvm_host: aah16.rdu2.centos.org
+http_mirror_baseurl: 'http://qa.centos.org/centos'
+kvm_host_bridge: br200
+ip: 172.22.1.37
+netmask: 255.255.254.0
+gateway: 172.22.1.254
+nameserver: 172.22.0.1
+centos_dist: 8-stream
+centos_arch: aarch64

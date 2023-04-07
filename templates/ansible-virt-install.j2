@@ -11,7 +11,7 @@ virt-install \
   --memory memory={{ kvm_guest_memory }},maxmemory={{ (kvm_guest_memory * 2) | int }} \
   --disk path=/var/lib/libvirt/images/{{ inventory_hostname}}.qcow2,size={{ kvm_guest_disk_size }},format=qcow2,device=disk,bus=virtio,cache=none \
   --nographics \
-  --network {{ kvm_guest_network }} \
+  --network {{ kvm_guest_network }},model=virtio \
   --hvm --accelerate \
   --autostart --wait=-1 \
   --noautoconsole \
@@ -19,10 +19,12 @@ virt-install \
 {% if 'ppc64le' in inventory_hostname or 'power9' in inventory_hostname %}
   --extra-args "console=hvc0 console=hvc1 net.ifnames=0 ks=file:/{{ inventory_hostname }}.cfg" \
 {% else %}
-  --extra-args "console=ttyS0 net.ifnames=0 ks=file:/{{ inventory_hostname }}.cfg" \
+  --extra-args "console=ttyS0 net.ifnames=0 inst.ks=file:/{{ inventory_hostname }}.cfg" \
 {% endif %}
-{% if centos_dist == 8 or centos_dist == '8-stream' %}
+{% if centos_dist == 7 or centos_dist == '8-stream' %}
   --location  http://qa.centos.org/centos/{{ centos_dist }}/BaseOS/{{ centos_arch }}/os/ 
+{% elif centos_dist == '9-stream' %}
+  --location  https://composes.stream.centos.org/production/latest-CentOS-Stream/compose/BaseOS/{{ centos_arch }}/os/
 {% else %}
   --location  http://qa.centos.org/centos/{{ centos_dist }}/os/{{ centos_arch }}/ 
 {% endif %}

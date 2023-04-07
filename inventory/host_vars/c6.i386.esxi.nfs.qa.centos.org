@@ -1,0 +1,5 @@
+name: c6.i386.esxi.nfs.qa.centos.org
+ip: 192.168.205.45
+centos_dist: 6
+centos_arch: i386
+mac_address: 00:0c:29:64:ac:2c

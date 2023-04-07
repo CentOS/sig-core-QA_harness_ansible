@@ -1,0 +1,3 @@
+ip: 192.168.205.15
+name: c7.x86_64.esxi.nfs.qa.centos.org
+mac_address: 00:0c:29:64:ac:2h

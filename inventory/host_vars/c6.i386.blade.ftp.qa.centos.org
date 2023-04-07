@@ -1,0 +1,6 @@
+name: c6.i386.blade.ftp.qa.centos.org
+ip: 192.168.205.39
+centos_dist: 6
+centos_arch: i386
+mac_address: 00:14:5e:bd:89:72
+blade_mm_slot: 13

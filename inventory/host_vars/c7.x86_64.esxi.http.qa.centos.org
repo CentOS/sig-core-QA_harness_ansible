@@ -1,0 +1,3 @@
+mac_address: 00:50:56:3f:ff:05
+ip: 192.168.205.5
+name: c7.x86_64.esxi.http.qa.centos.org

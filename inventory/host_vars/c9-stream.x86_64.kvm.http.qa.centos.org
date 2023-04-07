@@ -1,0 +1,5 @@
+
+kvm_guest_centos_dist: 9-stream
+centos_dist: 9-stream
+ip: 192.168.205.51
+name: c9-stream.x86_64.kvm.http.qa.centos.org

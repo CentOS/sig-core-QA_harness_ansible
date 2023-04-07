@@ -1,0 +1,4 @@
+name: c6.x86_64.xen.ftp.qa.centos.org
+ip: 192.168.205.36
+centos_dist: 6
+centos_arch: i386

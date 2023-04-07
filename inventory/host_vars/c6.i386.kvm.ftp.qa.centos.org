@@ -1,0 +1,4 @@
+name: c6.i386.kvm.ftp.qa.centos.org
+ip: 192.168.205.38
+centos_dist: 6
+centos_arch: i386

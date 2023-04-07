@@ -1,0 +1,4 @@
+mac_address: 00:50:56:3f:ff:53
+ip: 192.168.205.53
+name: c8.x86_64.esxi.qa.centos.org
+centos_dist: 8

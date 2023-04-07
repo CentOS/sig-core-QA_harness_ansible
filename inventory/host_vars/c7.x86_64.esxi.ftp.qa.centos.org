@@ -1,0 +1,4 @@
+ip: 192.168.205.10
+mac_address: 00:0c:29:64:ac:1a
+name: c7.x86_64.esxi.ftp.qa.centos.org
+

@@ -1,0 +1,4 @@
+ip: 192.168.205.7
+name: c7.x86_64.vbox.ftp.qa.centos.org
+mac_address: 08:00:27:55:32:08
+vbox_guest_rdp_port: 5008

@@ -1,0 +1,3 @@
+ip: 192.168.205.13
+kvm_guest_centos_dist: 7
+name: c7.x86_64.kvm.nfs.qa.centos.org

@@ -1,0 +1,5 @@
+name: c6.x86_64.esxi.http.qa.centos.org
+ip: 192.168.205.20
+centos_dist: 6
+centos_arch: x86_64
+mac_address: 00:50:56:3f:ff:20

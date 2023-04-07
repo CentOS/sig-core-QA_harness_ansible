@@ -1,0 +1,6 @@
+name: c6.i386.vbox.nfs.qa.centos.org
+ip: 192.168.205.42
+centos_dist: 6
+centos_arch: i386
+mac_address: 08:00:27:55:32:03
+vbox_guest_rdp_port: 5003

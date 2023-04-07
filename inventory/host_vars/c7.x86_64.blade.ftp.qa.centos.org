@@ -1,0 +1,8 @@
+ip: 192.168.205.9
+netmask: 255.255.252.0
+gateway: 192.168.204.1
+nameserver: 192.168.204.1
+mac_address: 00:14:5e:d0:25:b2
+centos_dist: 7
+centos_arch: x86_64
+name: c7.x86_64.blade.ftp.qa.centos.org

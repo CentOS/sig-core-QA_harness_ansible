@@ -1,0 +1,8 @@
+name: c0bk.qa.centos.org
+ip: 192.168.204.51
+netmask: 255.255.252.0
+gateway: 192.168.204.1
+nameserver: 192.168.204.1
+mac_address:
+centos_dist: 7
+centos_arch: x86_64
